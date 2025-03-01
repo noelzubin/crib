@@ -62,3 +62,8 @@ example, to search for all sections with vscode in the heading, type `vscode:`.
         - name: focus explorer
           key: ge
 ```
+
+# Similar tools
+Inspired by:
+* [showkeys](https://github.com/adamharmansky/showkeys)
+* [keyb](https://github.com/kencx/keyb)
