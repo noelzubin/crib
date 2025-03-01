@@ -151,7 +151,7 @@ impl App {
         frame.render_widget(input_field, Rect::new(0, 0, area.width, 1));
 
         // Set the cursor position
-        frame.set_cursor(10 + self.input.len() as u16, 0);
+        frame.set_cursor_position((10 + self.input.len() as u16, 0));
 
         // Filter the configuration based on user input
         let config = filter_by_input(&self.config, &self.input);
