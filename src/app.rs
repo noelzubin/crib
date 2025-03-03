@@ -2,8 +2,12 @@ use crate::config_parser::TableConfig;
 use ansi_to_tui::IntoText;
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::terminal::size;
+use ratatui::backend::TestBackend;
+use ratatui::buffer::{Buffer, Cell};
 use ratatui::style::Style as RatatuiStyle;
 use ratatui::text::Span;
+use ratatui::Terminal;
 use ratatui::{
     layout::Rect,
     style::{Color, Stylize},
@@ -74,6 +78,19 @@ impl App {
             self.handle_crossterm_events()?;
         }
         Ok(())
+    }
+
+    pub fn draw_to_buffer(mut self) {
+        let (width, height) = size().unwrap();
+        let backend = TestBackend::new(width, height);
+        let mut terminal = Terminal::new(backend).unwrap();
+
+        // Draw to the buffer
+        terminal.draw(|f| self.draw(f)).unwrap();
+
+        // Get the buffer and print it
+        let buffer = terminal.backend().buffer().clone();
+        print_buffer(&buffer);
     }
 
     pub fn create_simple_table(table_config: &TableConfig, width: usize) -> Table {
@@ -244,4 +261,26 @@ fn filter_by_input(config: &Vec<TableConfig>, input: &str) -> Vec<TableConfig> {
             None
         })
         .collect()
+}
+
+fn print_buffer(buffer: &Buffer) {
+    for y in 2..buffer.area.height {
+        let mut row_is_empty = true;
+        for x in 0..buffer.area.width {
+            let cell = buffer.cell((x, y)).unwrap();
+
+            let symbol = cell.symbol();
+            print!("{}", &symbol);
+
+            if !symbol.trim().is_empty() { 
+                row_is_empty = false;
+            }
+        }
+
+        // Early exit after last line with content
+        println!();
+        if row_is_empty {
+            break;
+        }
+    }
 }

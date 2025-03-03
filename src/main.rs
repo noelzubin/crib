@@ -32,13 +32,15 @@ const DEFAULT_YAML_CONFIG: &str = r#"
 struct Opt {
     /// The initial query
     query: Option<String>,
+    /// Print the configuration
+    #[structopt(long)]
+    print: bool,
 }
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
-    use std::fs;
     use dirs::home_dir;
-
+    use std::fs;
 
     let opt = Opt::from_args();
 
@@ -58,8 +60,16 @@ fn main() -> color_eyre::Result<()> {
 
     let config = config_parser::parse_config(config_path.to_str().unwrap()).unwrap();
     let table_configs = config.get_table_configs();
-    let terminal = ratatui::init();
-    let result = App::new(initial_query, table_configs).run(terminal);
-    ratatui::restore();
+    let app = App::new(initial_query, table_configs);
+
+    let result = if opt.print {
+        app.draw_to_buffer();
+        Ok(())
+    } else {
+        let terminal = ratatui::init();
+        let result = app.run(terminal);
+        ratatui::restore();
+        result
+    };
     result
 }
