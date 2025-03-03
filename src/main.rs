@@ -4,6 +4,8 @@ pub mod app;
 
 mod config_parser;
 
+use structopt::StructOpt;
+
 const DEFAULT_YAML_CONFIG: &str = r#"
 - name: app
   children:
@@ -24,10 +26,26 @@ const DEFAULT_YAML_CONFIG: &str = r#"
     key: ctrl + l
 "#;
 
+/// A simple CLI tool
+#[derive(StructOpt, Debug)]
+#[structopt(name = "crib")]
+struct Opt {
+    /// The initial query
+    query: Option<String>,
+}
+
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
     use std::fs;
     use dirs::home_dir;
+
+
+    let opt = Opt::from_args();
+
+    let initial_query = match opt.query {
+        Some(query) => format!("{}:", query),
+        None => String::new(),
+    };
 
     let config_path = home_dir()
         .map(|p| p.join(".config/crib/bindings.yaml"))
@@ -41,7 +59,7 @@ fn main() -> color_eyre::Result<()> {
     let config = config_parser::parse_config(config_path.to_str().unwrap()).unwrap();
     let table_configs = config.get_table_configs();
     let terminal = ratatui::init();
-    let result = App::new(table_configs).run(terminal);
+    let result = App::new(initial_query, table_configs).run(terminal);
     ratatui::restore();
     result
 }

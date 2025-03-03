@@ -58,11 +58,11 @@ fn rgb(r: usize, g: usize, b: usize) -> tabled::settings::Color {
 
 impl App {
     /// Construct a new instance of [`App`].
-    pub fn new(config: Vec<TableConfig>) -> Self {
+    pub fn new(initial_query: String, config: Vec<TableConfig>) -> Self {
         Self {
             config: config,
             running: false,
-            input: String::new(), // Initialize the input field
+            input: initial_query, // Initialize the input field
         }
     }
 
