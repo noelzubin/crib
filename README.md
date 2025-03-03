@@ -63,6 +63,17 @@ example, to search for all sections with vscode in the heading, type `vscode:`.
           key: ge
 ```
 
+#### Extra options 
+``` sh
+crib # run tui 
+
+# crib <query>
+crib vscode # filter app by query.
+
+crib --print # print to the console instead of running the tui. 
+```
+
+
 # Similar tools
 Inspired by:
 * [showkeys](https://github.com/adamharmansky/showkeys)
