@@ -30,15 +30,6 @@ pub struct TableConfig {
     pub bindings: Vec<Binding>,
 }
 
-impl TableConfig {
-    fn from_mapping(prefix: &str,mapping: &Mapping) -> Self {
-        TableConfig {
-            name: format!("{}{}", prefix, mapping.name.clone()),
-            bindings: mapping.bindings.clone(),
-        }
-    }
-}
-
 fn add_mapping_to_list(prefix:&str, tables: &mut Vec<TableConfig>, mapping: &Mapping) {
     let mapping_name = if prefix.is_empty() { mapping.name.to_string() } else { format!("{}:{}", prefix , &mapping.name) };
     let table_config = TableConfig{
